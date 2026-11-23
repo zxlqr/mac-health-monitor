@@ -1,4 +1,50 @@
-# Нагрузка Mac
+# Mac Health Monitor
+
+See how busy your Mac is at a glance. Mac Health Monitor puts a live load indicator in the macOS menu bar. Click it to check CPU usage, memory pressure and free disk space, or to see which apps are using the most CPU and memory.
+
+Built with Swift, AppKit and SwiftUI for Apple Silicon. The interface is in Russian. All measurements stay on your Mac.
+
+[Читать на русском](#русская-версия)
+
+## Build and run
+
+You need macOS 13 or later and the Xcode Command Line Tools. From the repository directory, run
+
+```sh
+./build.sh
+open 'build/Нагрузка Mac.app'
+```
+
+The script builds and ad-hoc signs the app locally. To keep it in your Applications folder, copy the generated app to `~/Applications`.
+
+## Read the menu bar
+
+The number is the higher of two values: CPU usage across all logical cores and a memory-pressure score. Normal memory pressure scores 0, elevated pressure scores 70, and critical pressure scores 100. For example, with 25% CPU usage and elevated memory pressure, the menu bar shows 70%. Disk space is shown separately. A dash means a measurement is unavailable or the first CPU sample is still in progress.
+
+- **Simple view** shows overall load, CPU usage, occupied memory, memory pressure and space on your home volume.
+- **Detailed view** adds two lists of three apps, ranked by CPU usage and memory footprint. Turn on **Подробный режим** to see them. An app’s CPU percentage uses the capacity of the whole Mac. Its memory figure includes measurable child processes. Helpers that macOS runs independently can fall outside that total.
+- **Settings** (**Настройки**) lets you choose the menu bar indicator and a refresh interval of 2, 5, 10 or 30 seconds. The disk reading refreshes once a minute. Mode and display preferences persist across launches.
+
+The monitor reads system counters while the panel is closed. It samples per-app counters only when the detailed panel is open. Memory readings appear first. CPU rankings appear about a second later because they use the difference between two samples.
+
+## Verify the build
+
+Run the self-test to check the load calculation and the live CPU, memory and disk readings.
+
+```sh
+'build/Нагрузка Mac.app/Contents/MacOS/MacHealthMonitor' --self-test
+```
+
+To inspect the layout with sample data, open the preview window.
+
+```sh
+'build/Нагрузка Mac.app/Contents/MacOS/MacHealthMonitor' --preview-window --preview-state warning --preview-dark
+```
+
+## Русская версия
+
+<details>
+<summary>Нагрузка Mac — описание, сборка и использование</summary>
 
 Локальное приложение для строки меню macOS: общий ориентир 0–100%, процессор, оперативная память и свободное место на домашнем томе. AppKit + SwiftUI, без пакетов, веб-служб, телеметрии и сетевых запросов. В Dock значка нет. При первом запуске в строке меню только процент; выбранный стиль сохраняется при обновлении приложения.
 
@@ -62,3 +108,5 @@ Self-test проверяет формулу при нормальном/повы
 ```
 
 `--preview-state`: `normal`, `warning`, `critical`, `unavailable`, `zero`, `full`. `--preview-expanded` раскрывает пояснение; `--preview-height 360` ограничивает высоту для проверки прокрутки. Без `--preview-dark` используется светлая тема. В этом режиме таймер не запускается, изменения Picker действуют только в окне и не записываются в UserDefaults. Закрытие окна завершает только процесс предпросмотра.
+
+</details>
